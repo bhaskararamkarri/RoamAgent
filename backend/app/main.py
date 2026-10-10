@@ -1,7 +1,10 @@
 import os
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+import json
+
 from app.models import (
     HealthResponse,
     ParseRequest,
@@ -26,6 +29,7 @@ from app.disruption import apply_disruptions, handle_disruption
 from app.planner import get_options
 from app.consent import verify_and_book, verify_and_cancel
 from app.explain import explain_itinerary
+from app.database import get_db, BookingModel
 
 app = FastAPI(
     title="TBS RoamAgent API",
@@ -126,7 +130,7 @@ def disrupt_endpoint(req: DisruptRequest):
 
 
 @app.post("/book", response_model=BookResponse)
-def book_endpoint(req: BookRequest):
+def book_endpoint(req: BookRequest, db: Session = Depends(get_db)):
     """
     Book an itinerary. Strictly requires approved=True.
     Recomputes the amount on server (never trusts client price).
@@ -137,6 +141,23 @@ def book_endpoint(req: BookRequest):
         itinerary_id=req.itinerary_id,
         approved=req.approved
     )
+    
+    # Save to database
+    db_booking = BookingModel(
+        id=bkg_id,
+        status="CONFIRMED", # Sandbox default success
+        amount=amount,
+        currency="INR",
+        payment_id=pmt_id,
+        payment_status="SANDBOX_SUCCESS",
+        travel_date=req.request.travel_date,
+        origin=req.request.origin,
+        destination=req.request.destination,
+        itinerary_snapshot=matched_itin.model_dump_json()
+    )
+    db.add(db_booking)
+    db.commit()
+
     return BookResponse(
         booking_id=bkg_id,
         payment=SandboxPayment(
@@ -149,18 +170,47 @@ def book_endpoint(req: BookRequest):
 
 
 @app.post("/cancel", response_model=CancelResponse)
-def cancel_endpoint(req: CancelRequest):
+def cancel_endpoint(req: CancelRequest, db: Session = Depends(get_db)):
     """Simulated cancellation endpoint. Strictly requires approved=True."""
     bkg_id, status_str, refund, msg = verify_and_cancel(
         booking_id=req.booking_id,
         approved=req.approved
     )
+    
+    db_booking = db.query(BookingModel).filter(BookingModel.id == bkg_id).first()
+    if db_booking:
+        db_booking.status = "CANCELLED"
+        db.commit()
+
     return CancelResponse(
         booking_id=bkg_id,
         status=status_str,
         refund_amount=refund,
         message=msg
     )
+
+
+@app.get("/bookings")
+def list_bookings(db: Session = Depends(get_db)):
+    """List all bookings for the user."""
+    # Since there's no auth, return all bookings for now, ordered by newest
+    bookings = db.query(BookingModel).order_by(BookingModel.created_at.desc()).all()
+    results = []
+    for b in bookings:
+        results.append({
+            "id": b.id,
+            "status": b.status,
+            "amount": b.amount,
+            "currency": b.currency,
+            "payment_id": b.payment_id,
+            "payment_status": b.payment_status,
+            "travel_date": b.travel_date,
+            "origin": b.origin,
+            "destination": b.destination,
+            "created_at": b.created_at.isoformat() if b.created_at else None,
+            "itinerary": json.loads(b.itinerary_snapshot) if b.itinerary_snapshot else None
+        })
+    return results
 
 
 @app.get("/scenarios", response_model=List[ScenarioItem])

@@ -149,3 +149,7 @@ export async function getScenarios(): Promise<ScenarioItem[]> {
 export async function getMetrics(): Promise<MetricsData> {
   return fetchJson("/metrics");
 }
+
+export async function getMyBookings(): Promise<any[]> {
+  return fetchJson("/bookings");
+}

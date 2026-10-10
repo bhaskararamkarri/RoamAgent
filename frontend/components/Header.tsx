@@ -86,28 +86,28 @@ export function Header({
           {/* Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 text-sm font-semibold" aria-label="Main Navigation">
             <a
-              href="#planner"
+              href="/#planner"
               className="px-3 py-1.5 rounded-lg text-[#302923] dark:text-[#FFF7EF] hover:bg-[#F8EDE2] dark:hover:bg-[#302724] hover:text-[#E65D36] transition-colors"
             >
               Trip Planner
             </a>
             <a
-              href="#routes"
+              href="/my-bookings"
+              className="px-3 py-1.5 rounded-lg text-[#302923] dark:text-[#FFF7EF] hover:bg-[#F8EDE2] dark:hover:bg-[#302724] hover:text-[#E65D36] transition-colors"
+            >
+              My Bookings
+            </a>
+            <a
+              href="/#routes"
               className="px-3 py-1.5 rounded-lg text-[#81756B] dark:text-[#C5B6AA] hover:bg-[#F8EDE2] dark:hover:bg-[#302724] hover:text-[#E65D36] transition-colors"
             >
               Popular Routes
             </a>
             <a
-              href="#explore"
+              href="/#explore"
               className="px-3 py-1.5 rounded-lg text-[#81756B] dark:text-[#C5B6AA] hover:bg-[#F8EDE2] dark:hover:bg-[#302724] hover:text-[#E65D36] transition-colors"
             >
               Explore India
-            </a>
-            <a
-              href="#how-it-works"
-              className="px-3 py-1.5 rounded-lg text-[#81756B] dark:text-[#C5B6AA] hover:bg-[#F8EDE2] dark:hover:bg-[#302724] hover:text-[#E65D36] transition-colors"
-            >
-              How It Works
             </a>
           </nav>
 
