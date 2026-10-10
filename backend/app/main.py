@@ -145,6 +145,7 @@ def book_endpoint(req: BookRequest, db: Session = Depends(get_db)):
     # Save to database
     db_booking = BookingModel(
         id=bkg_id,
+        user_id=req.session_id,
         status="CONFIRMED", # Sandbox default success
         amount=amount,
         currency="INR",
@@ -191,10 +192,12 @@ def cancel_endpoint(req: CancelRequest, db: Session = Depends(get_db)):
 
 
 @app.get("/bookings")
-def list_bookings(db: Session = Depends(get_db)):
-    """List all bookings for the user."""
-    # Since there's no auth, return all bookings for now, ordered by newest
-    bookings = db.query(BookingModel).order_by(BookingModel.created_at.desc()).all()
+def list_bookings(session_id: Optional[str] = None, db: Session = Depends(get_db)):
+    """List all bookings for the user isolated by session_id."""
+    if not session_id:
+        return []
+
+    bookings = db.query(BookingModel).filter(BookingModel.user_id == session_id).order_by(BookingModel.created_at.desc()).all()
     results = []
     for b in bookings:
         results.append({

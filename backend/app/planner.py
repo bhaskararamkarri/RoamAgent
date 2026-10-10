@@ -41,10 +41,10 @@ def create_itinerary(legs: List[Leg], request: TripRequest) -> Itinerary:
     start_dt = datetime.fromisoformat(legs[0].dep)
     end_dt = datetime.fromisoformat(legs[-1].arr)
     total_duration_min = int((end_dt - start_dt).total_seconds() / 60)
-    arrival_str = end_dt.strftime("%H:%M")
+    arrival_str = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
 
     # Risk evaluation
-    risk_val, risk_lbl = compute_risk(legs, buffers, request.arrival_deadline)
+    risk_val, risk_lbl = compute_risk(legs, buffers, request)
 
     assumptions = [
         f"Per-person fares ({request.passengers} pax) + vehicle fares ({vehicles_needed} vehicle(s))",
@@ -89,18 +89,16 @@ NODE_ALIASES: Dict[str, List[str]] = {
 
 
 def nodes_match(a: str, b: str) -> bool:
-    """Check if two location strings match exactly or via known city/hub aliases."""
+    """Check if two location strings match exactly or via known city/hub aliases. No substring matching."""
     if not a or not b:
         return False
     a_l = a.strip().lower()
     b_l = b.strip().lower()
     if a_l == b_l:
         return True
-    if a_l in b_l or b_l in a_l:
+    if a_l in NODE_ALIASES and b_l in NODE_ALIASES[a_l]:
         return True
-    if a_l in NODE_ALIASES and any(b_l == alias or alias in b_l or b_l in alias for alias in NODE_ALIASES[a_l]):
-        return True
-    if b_l in NODE_ALIASES and any(a_l == alias or alias in a_l or a_l in alias for alias in NODE_ALIASES[b_l]):
+    if b_l in NODE_ALIASES and a_l in NODE_ALIASES[b_l]:
         return True
     return False
 

@@ -3,7 +3,7 @@ from typing import List, Literal, Tuple
 from app.models import Itinerary, Leg, TripRequest
 
 
-def compute_risk(legs: List[Leg], buffers: List[int], deadline_str: str) -> Tuple[float, Literal["Low", "Medium", "High"]]:
+def compute_risk(legs: List[Leg], buffers: List[int], request: TripRequest) -> Tuple[float, Literal["Low", "Medium", "High"]]:
     """
     Compute risk value and label:
     ratio = buffer / typical_delay_min of incoming leg.
@@ -16,9 +16,11 @@ def compute_risk(legs: List[Leg], buffers: List[int], deadline_str: str) -> Tupl
     if len(legs) == 1:
         # Bus-only or single leg
         try:
-            req_hh, req_mm = map(int, deadline_str.split(":"))
-            arr_dt = datetime.fromisoformat(legs[0].arr) if "T" in legs[0].arr else datetime.strptime(legs[0].arr, "%H:%M")
-            slack_min = (req_hh * 60 + req_mm) - (arr_dt.hour * 60 + arr_dt.minute)
+            req_hh, req_mm = map(int, request.arrival_deadline.split(":"))
+            travel_dt = datetime.strptime(request.travel_date, "%Y-%m-%d")
+            deadline_dt = datetime(travel_dt.year, travel_dt.month, travel_dt.day, req_hh, req_mm)
+            arr_dt = datetime.fromisoformat(legs[0].arr)
+            slack_min = int((deadline_dt - arr_dt).total_seconds() / 60)
             slack_min = max(0, slack_min)
             risk_val = round(slack_min / max(1, legs[0].typical_delay_min), 2)
         except Exception:

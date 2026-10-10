@@ -112,6 +112,16 @@ export async function disruptTrip(
   });
 }
 
+function getSessionId(): string {
+  if (typeof window === "undefined") return "server-session";
+  let sid = localStorage.getItem("roamagent_session_id");
+  if (!sid) {
+    sid = "sess_" + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("roamagent_session_id", sid);
+  }
+  return sid;
+}
+
 export async function bookTrip(
   request: TripRequest,
   events: DisruptionEvent[],
@@ -125,6 +135,7 @@ export async function bookTrip(
       events,
       itinerary_id: itineraryId,
       approved,
+      session_id: getSessionId(),
     }),
   });
 }
@@ -151,5 +162,6 @@ export async function getMetrics(): Promise<MetricsData> {
 }
 
 export async function getMyBookings(): Promise<any[]> {
-  return fetchJson("/bookings");
+  const sid = getSessionId();
+  return fetchJson(`/bookings?session_id=${sid}`);
 }

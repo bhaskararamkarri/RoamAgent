@@ -32,22 +32,19 @@ def validate_itinerary(itinerary: Itinerary, request: TripRequest) -> Tuple[bool
         return False, ["Itinerary has no travel legs"]
 
     # 1. Arrival deadline check
-    # Parse itinerary arrival (HH:MM or ISO) and request arrival_deadline (HH:MM)
     try:
+        # Create full datetime for the deadline
         req_hh, req_mm = map(int, request.arrival_deadline.split(":"))
-        if "T" in itinerary.arrival:
-            arr_dt = datetime.fromisoformat(itinerary.arrival)
-            itin_hh, itin_mm = arr_dt.hour, arr_dt.minute
-        else:
-            itin_hh, itin_mm = map(int, itinerary.arrival.split(":"))
-
-        itin_minutes = itin_hh * 60 + itin_mm
-        req_minutes = req_hh * 60 + req_mm
-
-        if itin_minutes > req_minutes:
-            diff = itin_minutes - req_minutes
+        travel_dt = datetime.strptime(request.travel_date, "%Y-%m-%d")
+        deadline_dt = datetime(travel_dt.year, travel_dt.month, travel_dt.day, req_hh, req_mm)
+        
+        # Itinerary arrival is now guaranteed to be an ISO string
+        arr_dt = datetime.fromisoformat(itinerary.arrival)
+        
+        if arr_dt > deadline_dt:
+            diff_min = int((arr_dt - deadline_dt).total_seconds() / 60)
             reasons.append(
-                f"Arrives at {itin_hh:02d}:{itin_mm:02d}, which is {diff} minutes past the {request.arrival_deadline} deadline."
+                f"Arrives at {arr_dt.strftime('%H:%M')} on {arr_dt.strftime('%Y-%m-%d')}, which is {diff_min} minutes past the deadline."
             )
     except Exception as e:
         reasons.append(f"Invalid arrival time comparison: {str(e)}")

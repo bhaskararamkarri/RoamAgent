@@ -134,6 +134,7 @@ class BookRequest(BaseModel):
     events: List[DisruptionEvent] = Field(default_factory=list)
     itinerary_id: str
     approved: bool = False
+    session_id: Optional[str] = None
 
 
 class SandboxPayment(BaseModel):
