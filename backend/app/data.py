@@ -388,6 +388,20 @@ def generate_base_legs(travel_date_str: str) -> List[Leg]:
         ("nat-cdg-sml-bus-1", "bus", "Chandigarh", "Shimla", t_date, "06:00", t_date, "09:45", 340.0, False, "seater", 30, "HRTC Himsuta AC Volvo", True, 0.08, 20),
         ("nat-cdg-sml-cab-1", "cab", "Chandigarh", "Shimla", t_date, "06:30", t_date, "09:30", 1800.0, True, "na", 4, "Himalayan Ridge Tourist Cab", True, 0.06, 15),
         ("nat-sml-cdg-bus-1", "bus", "Shimla", "Chandigarh", t_date, "06:00", t_date, "09:45", 340.0, False, "seater", 26, "HRTC Himsuta AC Volvo", True, 0.08, 20),
+        # Hyderabad <-> Bengaluru
+        ("nat-hyd-blr-bus-1", "bus", "Hyderabad", "Bengaluru", prev_date, "21:00", t_date, "06:30", 1150.0, False, "sleeper", 14, "APSRTC Garuda Plus", True, 0.08, 20),
+        ("nat-hyd-blr-train-1", "train", "Hyderabad", "Bengaluru", prev_date, "19:00", t_date, "06:50", 1450.0, False, "sleeper", 20, "Kacheguda Express", True, 0.05, 15),
+
+        # Delhi <-> Lucknow
+        ("nat-del-lko-train-1", "train", "New Delhi", "Lucknow", t_date, "06:10", t_date, "12:50", 1050.0, False, "seater", 30, "Shatabdi Express", True, 0.05, 10),
+        ("nat-del-lko-bus-1", "bus", "New Delhi", "Lucknow", prev_date, "22:00", t_date, "06:30", 850.0, False, "sleeper", 20, "UPSRTC Janrath AC", True, 0.10, 25),
+
+        # Amritsar <-> Delhi
+        ("nat-asr-del-train-1", "train", "Amritsar", "New Delhi", t_date, "05:00", t_date, "11:15", 950.0, False, "seater", 40, "Swarna Shatabdi", True, 0.06, 15),
+        ("nat-asr-del-bus-1", "bus", "Amritsar", "New Delhi", prev_date, "21:30", t_date, "06:00", 750.0, False, "sleeper", 25, "PRTC Volvo AC", True, 0.08, 20),
+        
+        # Amritsar <-> Lucknow (Direct)
+        ("nat-asr-lko-train-1", "train", "Amritsar", "Lucknow", prev_date, "18:00", t_date, "10:30", 1450.0, False, "sleeper", 18, "Amritsar-Howrah Mail", True, 0.15, 45),
     ]
 
     for (pfx, mode, fn, tn, dep_d, dep_t, arr_d, arr_t, fare, p_veh, s_type, s_left, op, acc, d_prob, delay) in national_corridors:

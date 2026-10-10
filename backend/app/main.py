@@ -82,7 +82,10 @@ def plan_endpoint(req: PlanRequest):
     rate = round(passed_count / total_candidates, 3) if total_candidates > 0 else 0.0
 
     notes = []
-    if not feasible:
+    if not feasible and not rejected:
+        notes.append(f"Unsupported Route: No known corridors connect {req.request.origin} to {req.request.destination} in our current network.")
+        notes.append("We only display verified, bookable routes and never fabricate connections to fill results.")
+    elif not feasible:
         notes.append("No feasible itineraries match your exact deadline, budget, or accessibility criteria.")
         notes.append("Suggestion: Consider relaxing your arrival deadline by 60 minutes or adjusting your budget ceiling.")
 

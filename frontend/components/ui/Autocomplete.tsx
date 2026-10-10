@@ -25,6 +25,7 @@ export interface AutocompleteProps {
   className?: string;
   autoFocus?: boolean;
   required?: boolean;
+  variant?: "default" | "bare";
 }
 
 export function Autocomplete({
@@ -39,6 +40,7 @@ export function Autocomplete({
   className,
   autoFocus = false,
   required = false,
+  variant = "default",
 }: AutocompleteProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<LocationOption[]>([]);
@@ -167,9 +169,11 @@ export function Autocomplete({
       )}
 
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none">
-          <Search className="w-4 h-4" aria-hidden="true" />
-        </div>
+        {variant === "default" && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none">
+            <Search className="w-4 h-4" aria-hidden="true" />
+          </div>
+        )}
 
         <input
           ref={inputRef}
@@ -187,10 +191,10 @@ export function Autocomplete({
           autoCapitalize="off"
           spellCheck={false}
           className={cn(
-            "glass-input w-full pl-10 pr-10 py-2.5 text-sm text-neutral-50 placeholder-neutral-500",
+            "w-full text-sm text-neutral-50 placeholder-neutral-500 outline-none",
             "transition-colors duration-150",
+            variant === "default" ? "glass-input pl-10 pr-10 py-2.5 bg-neutral-900/50" : "bg-transparent font-semibold",
             error && "border-red-500/50 focus:border-red-500 focus:ring-red-500/20",
-            "bg-neutral-900/50"
           )}
           aria-autocomplete="list"
           aria-controls={isOpen ? "autocomplete-options" : undefined}

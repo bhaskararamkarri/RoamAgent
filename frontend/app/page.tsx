@@ -84,6 +84,7 @@ export default function Home() {
 
   // Debounce ref for constraints
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const planRequestIdRef = useRef<number>(0);
 
   // Initial load: check health and fetch scenarios
   useEffect(() => {
@@ -103,9 +104,16 @@ export default function Home() {
       events: DisruptionEvent[] = disruptionEvents,
       mode: RankMode = rankMode
     ) => {
+      const currentRequestId = ++planRequestIdRef.current;
       setIsPlanning(true);
       try {
         const planRes = await planTrip(req, events, mode);
+        
+        // Prevent old responses from overwriting newer ones
+        if (currentRequestId !== planRequestIdRef.current) {
+          return;
+        }
+
         setFeasibleItineraries(planRes.feasible);
         setRejectedCandidates(planRes.rejected);
         setPlanNotes(planRes.notes);
@@ -117,18 +125,22 @@ export default function Home() {
           // Fetch explanation asynchronously in background
           explainItinerary(topId, req, events, null, lang)
             .then((exp) => {
-              setExplanations((prev) => ({
-                ...prev,
-                [topId]: exp.text,
-              }));
+              if (currentRequestId === planRequestIdRef.current) {
+                setExplanations((prev) => ({
+                  ...prev,
+                  [topId]: exp.text,
+                }));
+              }
             })
             .catch(() => {});
         } else {
           setSelectedItinerary(null);
         }
       } catch (err: any) {
-        toast(err.message || "Failed to compute travel plan", { variant: "error" });
-        setIsPlanning(false);
+        if (currentRequestId === planRequestIdRef.current) {
+          toast(err.message || "Failed to compute travel plan", { variant: "error" });
+          setIsPlanning(false);
+        }
       }
     },
     [disruptionEvents, rankMode, lang, toast]

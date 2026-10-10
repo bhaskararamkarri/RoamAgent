@@ -24,20 +24,8 @@ interface ConstraintChipsProps {
   disabled?: boolean;
 }
 
-const ORIGIN_OPTIONS = [
-  "Vizag Railway Station",
-  "MVP Colony",
-  "Gajuwaka",
-  "Vizag RTC Complex (Dwaraka)",
-];
-
-const DESTINATION_OPTIONS = [
-  "Hitech City",
-  "Secunderabad",
-  "Gachibowli",
-  "Ameerpet",
-  "Miyapur",
-];
+import { Autocomplete } from "@/components/ui/Autocomplete";
+import { searchLocationOptions } from "@/lib/locations";
 
 const SEAT_TYPES: { value: SeatType; label: string }[] = [
   { value: "any", label: "Any" },
@@ -98,19 +86,14 @@ export function ConstraintChips({
             <label htmlFor="origin" className="text-[10px] text-neutral-400 block font-medium leading-none mb-1 uppercase tracking-wide">
               Origin
             </label>
-            <select
-              id="origin"
-              disabled={disabled}
+            <Autocomplete
               value={request.origin}
-              onChange={(e) => handleUpdate({ origin: e.target.value })}
-              className="bg-transparent text-neutral-50 text-xs font-semibold outline-none w-full truncate cursor-pointer"
-            >
-              {ORIGIN_OPTIONS.map((o) => (
-                <option key={o} value={o} className="bg-neutral-900 text-neutral-50">
-                  {o}
-                </option>
-              ))}
-            </select>
+              onChange={(val, opt) => handleUpdate({ origin: opt ? opt.name : val })}
+              fetchOptions={async (q) => searchLocationOptions(q, 12)}
+              placeholder="Origin"
+              disabled={disabled}
+              variant="bare"
+            />
           </div>
         </motion.div>
 
@@ -125,19 +108,14 @@ export function ConstraintChips({
             <label htmlFor="destination" className="text-[10px] text-neutral-400 block font-medium leading-none mb-1 uppercase tracking-wide">
               Destination
             </label>
-            <select
-              id="destination"
-              disabled={disabled}
+            <Autocomplete
               value={request.destination}
-              onChange={(e) => handleUpdate({ destination: e.target.value })}
-              className="bg-transparent text-neutral-50 text-xs font-semibold outline-none w-full truncate cursor-pointer"
-            >
-              {DESTINATION_OPTIONS.map((d) => (
-                <option key={d} value={d} className="bg-neutral-900 text-neutral-50">
-                  {d}
-                </option>
-              ))}
-            </select>
+              onChange={(val, opt) => handleUpdate({ destination: opt ? opt.name : val })}
+              fetchOptions={async (q) => searchLocationOptions(q, 12)}
+              placeholder="Destination"
+              disabled={disabled}
+              variant="bare"
+            />
           </div>
         </motion.div>
 
