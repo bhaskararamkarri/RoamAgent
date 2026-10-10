@@ -57,13 +57,13 @@ describe("Navigation & Footer Repair", () => {
     );
 
     const tripPlannerLink = screen.getByRole("link", { name: "Trip Planner" });
-    expect(tripPlannerLink.getAttribute("href")).toBe("#planner");
+    expect(tripPlannerLink.getAttribute("href")).toBe("/#planner");
 
     const popularRoutesLink = screen.getByRole("link", { name: "Popular Routes" });
-    expect(popularRoutesLink.getAttribute("href")).toBe("#routes");
+    expect(popularRoutesLink.getAttribute("href")).toBe("/#routes");
 
     const exploreLink = screen.getByRole("link", { name: "Explore India" });
-    expect(exploreLink.getAttribute("href")).toBe("#explore");
+    expect(exploreLink.getAttribute("href")).toBe("/#explore");
   });
 
   it("triggers onSelectRoute callback with correct origin and destination on card click", () => {

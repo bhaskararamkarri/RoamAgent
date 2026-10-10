@@ -83,8 +83,8 @@ def plan_endpoint(req: PlanRequest):
 
     notes = []
     if not feasible and not rejected:
-        notes.append(f"Unsupported Route: No known corridors connect {req.request.origin} to {req.request.destination} in our current network.")
-        notes.append("We only display verified, bookable routes and never fabricate connections to fill results.")
+        notes.append(f"Unsupported Route: No simulated corridors connect {req.request.origin} to {req.request.destination} in our current network.")
+        notes.append("The transport data is simulated. We do not fabricate mock connections if they are absent from our simulated dataset.")
     elif not feasible:
         notes.append("No feasible itineraries match your exact deadline, budget, or accessibility criteria.")
         notes.append("Suggestion: Consider relaxing your arrival deadline by 60 minutes or adjusting your budget ceiling.")

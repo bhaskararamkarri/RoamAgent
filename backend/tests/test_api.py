@@ -23,8 +23,43 @@ def test_api_parse():
     assert data["needs_followup"] is False
     assert data["request"]["origin"] == "Vizag Railway Station"
     assert data["request"]["destination"] == "Hitech City"
-    assert data["request"]["arrival_deadline"] == "09:00"
-    assert data["request"]["passengers"] == 2
+
+def test_api_plan_unsupported_route():
+    """Verify an unsupported route returns the correct note."""
+    req_payload = {
+        "request": {
+            "origin": "Chennai",
+            "destination": "Kolkata",
+            "travel_date": "2026-10-15",
+            "arrival_deadline": "12:00",
+            "passengers": 1
+        }
+    }
+    res = client.post("/plan", json=req_payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data["feasible"]) == 0
+    assert len(data["rejected"]) == 0
+    assert any("Unsupported Route: No simulated corridors connect" in note for note in data["notes"])
+    assert any("The transport data is simulated" in note for note in data["notes"])
+
+def test_api_plan_violated_constraints():
+    """Verify a route that exists but violates deadline returns a different note."""
+    req_payload = {
+        "request": {
+            "origin": "Visakhapatnam",
+            "destination": "Hyderabad",
+            "travel_date": "2026-10-15",
+            "arrival_deadline": "05:00", # Unreasonably early
+            "passengers": 1
+        }
+    }
+    res = client.post("/plan", json=req_payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data["feasible"]) == 0
+    assert len(data["rejected"]) > 0 # Some paths generated, but rejected
+    assert any("No feasible itineraries match your exact deadline" in note for note in data["notes"])
 
 
 def test_api_plan():

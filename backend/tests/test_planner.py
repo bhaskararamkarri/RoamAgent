@@ -2,6 +2,7 @@ import pytest
 from app.models import TripRequest
 from app.data import generate_base_legs
 from app.planner import get_options, enumerate_candidates, calculate_buffers, create_itinerary
+from app.validator import validate_itinerary
 
 
 def test_planner_chaining_and_buffers():
@@ -84,3 +85,43 @@ def test_deterministic_itinerary_id():
     ids_b = [c.id for c in cands_b]
 
     assert ids_a == ids_b, "Candidate IDs must be 100% deterministic"
+
+def test_planner_delhi_lucknow():
+    """Verify planner generates paths for Delhi to Lucknow."""
+    travel_date = "2026-10-15"
+    base_legs = generate_base_legs(travel_date)
+
+    req = TripRequest(
+        origin="New Delhi",
+        destination="Lucknow",
+        travel_date=travel_date,
+        arrival_deadline="10:00",
+        passengers=1
+    )
+
+    candidates = enumerate_candidates(req, base_legs)
+    assert len(candidates) > 0, "Should generate paths for Delhi to Lucknow"
+
+def test_planner_amritsar_lucknow_deadline_validation():
+    """Verify Amritsar to Lucknow at 09:00 deadline rejects the 10:30 seeded itinerary."""
+    travel_date = "2026-10-15"
+    base_legs = generate_base_legs(travel_date)
+
+    req = TripRequest(
+        origin="Amritsar",
+        destination="Lucknow",
+        travel_date=travel_date,
+        arrival_deadline="09:00",
+        passengers=1
+    )
+
+    candidates = enumerate_candidates(req, base_legs)
+    assert len(candidates) > 0, "Should generate paths for Amritsar to Lucknow"
+    
+    valid_count = 0
+    for cand in candidates:
+        is_valid, _ = validate_itinerary(cand, req)
+        if is_valid:
+            valid_count += 1
+            
+    assert valid_count == 0, "No itinerary should pass the 09:00 deadline for Amritsar to Lucknow"

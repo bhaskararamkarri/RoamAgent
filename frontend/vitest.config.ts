@@ -11,4 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./"),
     },
   },
+  esbuild: {
+    jsxInject: `import React from 'react'`
+  }
 });
