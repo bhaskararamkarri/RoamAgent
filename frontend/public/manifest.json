@@ -1,0 +1,16 @@
+{
+  "name": "TBS RoamAgent - Multi-Leg Bus Concierge",
+  "short_name": "RoamAgent",
+  "description": "Agentic AI travel concierge for Vizag-Hyderabad multi-leg bus journeys",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+[
+  {
+    "id": "case-01",
+    "description": "Standard clean trip request",
+    "input": "Vizag to Hitech City tomorrow by 9 AM for 2 people",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2,
+      "seat_type": "any"
+    }
+  },
+  {
+    "id": "case-02",
+    "description": "Visakhapatnam spelling with sleeper and budget",
+    "input": "Need a trip from Visakhapatnam to Hyderabad Hitech City by 9:00 AM for 2, sleeper, budget under Rs 3000",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2,
+      "seat_type": "sleeper",
+      "budget_total_inr": 3000.0
+    }
+  },
+  {
+    "id": "case-03",
+    "description": "VSKP alias and 3k budget format",
+    "input": "VSKP to Hitech City tomorrow by 8:30 AM for 2 passengers with 3k budget",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "08:30",
+      "passengers": 2,
+      "budget_total_inr": 3000.0
+    }
+  },
+  {
+    "id": "case-04",
+    "description": "Telugu transliterated query",
+    "input": "repu 9 ki Hyderabad Hitech City ki 2 mandi Vizag nundi",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2
+    }
+  },
+  {
+    "id": "case-05",
+    "description": "Telugu transliteration with sleeper and solo traveler",
+    "input": "repu podduna 8:30 ki Vizag to Miyapur sleeper bus 1 mandi",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Miyapur",
+      "arrival_deadline": "08:30",
+      "passengers": 1,
+      "seat_type": "sleeper"
+    }
+  },
+  {
+    "id": "case-06",
+    "description": "Me and my wife relationship phrasing",
+    "input": "Me and my wife traveling from Vizag to Gachibowli tomorrow by 9am",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Gachibowli",
+      "arrival_deadline": "09:00",
+      "passengers": 2
+    }
+  },
+  {
+    "id": "case-07",
+    "description": "Solo traveler phrasing",
+    "input": "Solo traveler from MVP Colony to Hitech City tomorrow 9:15 AM",
+    "expected": {
+      "needs_followup": false,
+      "origin": "MVP Colony",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:15",
+      "passengers": 1
+    }
+  },
+  {
+    "id": "case-08",
+    "description": "Wheelchair accessibility requirement",
+    "input": "Need wheelchair accessible trip from Vizag to Hitech City tomorrow by 9 AM for 2",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2,
+      "accessibility": ["wheelchair"]
+    }
+  },
+  {
+    "id": "case-09",
+    "description": "Elderly and senior accessibility phrasing",
+    "input": "Vizag to Hitech City tomorrow by 9am for 2 elderly seniors requiring wheelchair",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2,
+      "accessibility": ["wheelchair"]
+    }
+  },
+  {
+    "id": "case-10",
+    "description": "Gajuwaka origin micro-location",
+    "input": "From Gajuwaka to Hitech City tomorrow by 9am, 2 people",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Gajuwaka",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2
+    }
+  },
+  {
+    "id": "case-11",
+    "description": "Secunderabad destination and rupee symbol budget",
+    "input": "Vizag to Secunderabad tomorrow by 9:00 AM ₹2500 max 1 pax",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Secunderabad",
+      "arrival_deadline": "09:00",
+      "passengers": 1,
+      "budget_total_inr": 2500.0
+    }
+  },
+  {
+    "id": "case-12",
+    "description": "Ameerpet destination with seater preference",
+    "input": "Vizag to Ameerpet tomorrow by 8:45 AM, 1 passenger, seater",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Ameerpet",
+      "arrival_deadline": "08:45",
+      "passengers": 1,
+      "seat_type": "seater"
+    }
+  },
+  {
+    "id": "case-13",
+    "description": "ISO date format",
+    "input": "2026-10-15 Vizag to Hitech City by 09:00 for 3 people",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "travel_date": "2026-10-15",
+      "arrival_deadline": "09:00",
+      "passengers": 3
+    }
+  },
+  {
+    "id": "case-14",
+    "description": "Military time format by 0900",
+    "input": "by 0900 from Vizag to Hitech City tomorrow for 2",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2
+    }
+  },
+  {
+    "id": "case-15",
+    "description": "Heavy luggage preference",
+    "input": "Vizag to Hitech City tomorrow by 9am for 2 people with heavy luggage",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag Railway Station",
+      "destination": "Hitech City",
+      "arrival_deadline": "09:00",
+      "passengers": 2,
+      "luggage": "heavy"
+    }
+  },
+  {
+    "id": "case-16",
+    "description": "Missing deadline requires one follow-up question",
+    "input": "Vizag to Hitech City tomorrow for 2 people",
+    "expected": {
+      "needs_followup": true,
+      "question_topic": "deadline"
+    }
+  },
+  {
+    "id": "case-17",
+    "description": "Missing passengers requires one follow-up question",
+    "input": "Vizag to Hitech City tomorrow by 9am",
+    "expected": {
+      "needs_followup": true,
+      "question_topic": "passengers"
+    }
+  },
+  {
+    "id": "case-18",
+    "description": "Missing destination requires one follow-up question",
+    "input": "Vizag tomorrow by 9am for 2 people",
+    "expected": {
+      "needs_followup": true,
+      "question_topic": "destination"
+    }
+  },
+  {
+    "id": "case-19",
+    "description": "Missing origin requires one follow-up question",
+    "input": "Going to Hyderabad Hitech City tomorrow by 9am for 2",
+    "expected": {
+      "needs_followup": true,
+      "question_topic": "origin"
+    }
+  },
+  {
+    "id": "case-20",
+    "description": "Messy conversational query with 4 adults and light bags",
+    "input": "Hey RoamAgent, need to book 4 adults from Dwaraka RTC Complex to Hitech City by 10 AM with light luggage",
+    "expected": {
+      "needs_followup": false,
+      "origin": "Vizag RTC Complex (Dwaraka)",
+      "destination": "Hitech City",
+      "arrival_deadline": "10:00",
+      "passengers": 4,
+      "luggage": "light"
+    }
+  }
+]
