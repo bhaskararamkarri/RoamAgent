@@ -1003,9 +1003,13 @@ export function findLocationById(id: string): Location | undefined {
  */
 export function searchLocations(query: string, limit = 15): Location[] {
   const normalizedQuery = query.toLowerCase().trim();
-  if (!normalizedQuery || normalizedQuery.length < 2) return [];
-
   const locations = getAllLocations();
+
+  if (!normalizedQuery || normalizedQuery.length < 2) {
+    // Return major hubs as default suggestions
+    return locations.filter(loc => loc.isMajorHub).slice(0, limit);
+  }
+
   const results = locations
     .map((loc) => {
       let score = 0;

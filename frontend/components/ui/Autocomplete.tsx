@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, X, Search, MapPin } from "lucide-react";
+import { ChevronDown, X, Search, MapPin, Building2, Train, Plane, Navigation2 } from "lucide-react";
 
 export interface LocationOption {
   id: string;
@@ -73,10 +73,6 @@ export function Autocomplete({
 
   const searchOptions = useCallback(
     async (query: string) => {
-      if (!query.trim() || query.length < 2) {
-        setOptions([]);
-        return;
-      }
       setLoading(true);
       try {
         const results = await fetchOptions(query);
@@ -155,9 +151,7 @@ export function Autocomplete({
   };
 
   const handleFocus = () => {
-    if (inputValue.length >= 2) {
-      searchOptions(inputValue);
-    }
+    searchOptions(inputValue);
     setIsOpen(true);
   };
 
@@ -231,91 +225,93 @@ export function Autocomplete({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            initial={{ opacity: 0, y: -4, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            exit={{ opacity: 0, y: -4, scale: 0.99 }}
             transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute z-[100] w-full mt-1"
+            className="absolute z-[100] w-full mt-1.5"
             role="listbox"
             id="autocomplete-options"
           >
-            <div className="glass-elevated rounded-xl border border-neutral-700 overflow-hidden shadow-elevated">
+            <div className="bg-[#1C1715]/95 backdrop-blur-xl rounded-xl border border-[#4B3C35] overflow-hidden shadow-2xl shadow-black/40 ring-1 ring-[#E65D36]/20">
               {loading && (
-                <div className="p-3 flex items-center gap-2 text-sm text-neutral-400">
-                  <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
-                  Searching locations...
+                <div className="p-4 flex items-center justify-center gap-2 text-sm text-[#C5B6AA]">
+                  <div className="w-4 h-4 border-2 border-[#E65D36] border-t-transparent rounded-full animate-spin" />
+                  Loading suggestions...
                 </div>
               )}
 
               {!loading && options.length === 0 && inputValue.length >= 2 && (
-                <div className="p-3 text-sm text-neutral-400 text-center">
-                  No locations found for "{inputValue}"
+                <div className="p-4 text-sm text-[#C5B6AA] text-center">
+                  No destinations found for "{inputValue}"
                 </div>
               )}
 
-              {!loading && options.length === 0 && inputValue.length < 2 && (
-                <div className="p-3 text-sm text-neutral-500 text-center">
-                  Type at least 2 characters to search
+              {!loading && options.length > 0 && (
+                <div className="px-3 pt-3 pb-1.5 flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#F2B544]">
+                    {inputValue.trim().length === 0 ? "Popular Destinations" : "Search Results"}
+                  </span>
+                  <div className="h-px bg-[#4B3C35] flex-1"></div>
                 </div>
               )}
 
               <ul
                 ref={listRef}
-                className="max-h-60 overflow-y-auto"
+                className="max-h-72 overflow-y-auto p-1.5"
                 role="listbox"
               >
                 {options.map((option, index) => (
                   <motion.li
                     key={option.id}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -5 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.02 }}
+                    transition={{ delay: index * 0.015 }}
                     className={cn(
-                      "px-3 py-2.5 text-sm cursor-pointer transition-colors",
-                      "hover:bg-neutral-800/50",
-                      highlightedIndex === index && "bg-neutral-800/50 text-neutral-50"
+                      "px-3 py-2.5 my-0.5 rounded-lg text-sm cursor-pointer transition-all duration-150 flex items-center gap-3 group",
+                      highlightedIndex === index || (!inputValue && index === 0 && highlightedIndex === -1)
+                        ? "bg-[#302724] border border-[#4B3C35]"
+                        : "border border-transparent hover:bg-[#302724]/60 hover:border-[#4B3C35]/50"
                     )}
                     role="option"
                     aria-selected={highlightedIndex === index}
                     onClick={() => handleOptionClick(option)}
                     onMouseEnter={() => setHighlightedIndex(index)}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className={cn(
-                          "w-5 h-5 rounded-lg flex items-center justify-center shrink-0",
-                          option.type === "city" && "bg-blue-500/20 text-blue-400",
-                          option.type === "station" && "bg-emerald-500/20 text-emerald-400",
-                          option.type === "airport" && "bg-amber-500/20 text-amber-400",
-                          option.type === "landmark" && "bg-purple-500/20 text-purple-400"
-                        )}
-                      >
-                        {option.type === "city" && <MapPin className="w-3 h-3" />}
-                        {option.type === "station" && <MapPin className="w-3 h-3" />}
-                        {option.type === "airport" && <MapPin className="w-3 h-3" />}
-                        {option.type === "landmark" && <MapPin className="w-3 h-3" />}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-50 truncate">
-                          {option.name}
-                        </p>
-                        {option.state && (
-                          <p className="text-xs text-neutral-400 truncate">
-                            {option.state}
-                          </p>
-                        )}
-                      </div>
-                      {option.type === "station" && (
-                        <span className="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full">
-                          Terminal
-                        </span>
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-colors",
+                        option.type === "city" && "bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20",
+                        option.type === "station" && "bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20",
+                        option.type === "airport" && "bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20",
+                        option.type === "landmark" && "bg-purple-500/10 text-purple-400 group-hover:bg-purple-500/20"
                       )}
-                      {option.type === "airport" && (
-                        <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded-full">
-                          Airport
-                        </span>
+                    >
+                      {option.type === "city" && <Building2 className="w-4 h-4" />}
+                      {option.type === "station" && <Train className="w-4 h-4" />}
+                      {option.type === "airport" && <Plane className="w-4 h-4" />}
+                      {option.type === "landmark" && <Navigation2 className="w-4 h-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[#FFF7EF] truncate">
+                        {option.name}
+                      </p>
+                      {option.state && (
+                        <p className="text-[11px] text-[#C5B6AA] truncate mt-0.5 font-medium">
+                          {option.state}
+                        </p>
                       )}
                     </div>
+                    {option.type === "station" && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-md shrink-0 border border-emerald-500/30">
+                        Station
+                      </span>
+                    )}
+                    {option.type === "airport" && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded-md shrink-0 border border-amber-500/30">
+                        Airport
+                      </span>
+                    )}
                   </motion.li>
                 ))}
               </ul>

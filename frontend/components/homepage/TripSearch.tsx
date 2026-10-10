@@ -115,12 +115,10 @@ export function TripSearch({
   };
 
   const fetchOriginSuggestions = async (query: string): Promise<LocationOption[]> => {
-    if (query.length < 2) return [];
     return searchLocationOptions(query, 12);
   };
 
   const fetchDestSuggestions = async (query: string): Promise<LocationOption[]> => {
-    if (query.length < 2) return [];
     return searchLocationOptions(query, 12);
   };
 
